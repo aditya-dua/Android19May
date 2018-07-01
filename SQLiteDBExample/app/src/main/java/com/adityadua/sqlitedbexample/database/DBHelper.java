@@ -2,9 +2,14 @@ package com.adityadua.sqlitedbexample.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.adityadua.sqlitedbexample.model.BookData;
 import com.adityadua.sqlitedbexample.utils.Constants;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by AdityaDua on 30/06/18.
@@ -69,12 +74,15 @@ public class DBHelper {
 
         try{
             db.beginTransaction();
+            /* TableNam e: 3 string : 1) insert into tabname (
+             *  cv.keys  2. id,bookName,bookID)
+             *  3. values are fetched values (cv.getVAlues("1"),)*/
             id = db.insert(tableName,null,cv);
             db.setTransactionSuccessful();
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            db.setTransactionSuccessful();
+            db.endTransaction();
         }
         return id;
     }
@@ -115,6 +123,63 @@ public class DBHelper {
         }
 
         return  rowCount;
+    }
+
+    /*
+     * Fetching Data From DB : The count of Value sin the DB
+     */
+
+    public int getFullContent(String tableName,String where){
+
+        int rowCount = 0;
+
+        /*
+         * distinct results , tablename, array of columns wanted in result,group by
+         */
+        Cursor c = db.query(false,tableName,null,where,null,null,null,null,null);
+
+        try {
+            c.moveToFirst();
+            if (c != null) {
+                rowCount = c.getCount();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            c.close();
+        }
+
+        return rowCount;
+    }
+
+    /*
+     * To insert the complete Data
+     */
+
+    public List<BookData> getAllBooks(){
+
+        List<BookData> books = new LinkedList<>();
+        String query = "select * from " + Constants.BOOK_TABLE;
+
+        Cursor c = db.rawQuery(query,null);
+        BookData book = null;
+
+        if(c.moveToFirst()){
+            do{
+                book = new BookData();
+                book.setId(c.getInt(0));
+                book.setBookid(c.getString(1));
+                book.setBookName(c.getString(2));
+                book.setBookAuthor(c.getString(3));
+
+                books.add(book);
+            }while(c.moveToNext());
+        }
+        c.close();
+
+        return  books;
+
+
     }
 
 }
