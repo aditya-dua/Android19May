@@ -1,0 +1,22 @@
+How Would Push Notification Work ?
+
+1) Is it targeted Notification
+Amazon : Your Product has been delivered....
+
+
+2) How would the app receive it ?
+Google maintains the TOkenId with the DeviceID
+
+Amazon : AccountID,List<Devices>
+
+Once a product is delivered , it fetches the Email/ Account Id and the list of devices
+// based on the list of devices : it can get the token Id OF the devices
+
+// Now you have a List Of Tokens and you will just need to trigger it!
+
+
+
+3) What would you to trigger the Notification ?
+
+Registeration starts on App Opening
+& GCM was the preceedor
